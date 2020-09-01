@@ -1,10 +1,10 @@
-import { createModule } from '@vue-storefront/core/lib/module'
+import { StorefrontModule } from '@vue-storefront/core/lib/modules'
+import { StorageManager } from '@vue-storefront/core/lib/storage-manager'
 import { beforeEachGuard } from './router/beforeEach'
+import { afterRegistration } from './hooks/afterRegistration'
 
-const KEY = 'vsf-force-login'
-export const VsfForceLogin = createModule({
-  key: KEY,
-  router: { beforeEach: beforeEachGuard }
-})
-
-export { userExtend } from './userExtend'
+export const ForceLoginModule: StorefrontModule = async function ({ router }) {
+  StorageManager.init('user')
+  router.beforeEach(beforeEachGuard)
+  afterRegistration()
+}
