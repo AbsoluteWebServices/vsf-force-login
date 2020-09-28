@@ -4,16 +4,19 @@ import coreActions from '@vue-storefront/core/modules/user/store/actions'
 const setTokens = async () => {
   const params = new URLSearchParams(location.search)
 
-  if (!params.has('__sso') || !params.has('__sst')) {
+  if (!params.has('__sso')) {
     return
   }
 
   const token = params.get('__sso')
-  const refreshToken = params.get('__sst')
   const cache = Vue.prototype.$db.usersCollection
 
   await cache.setItem('current-token', token)
-  await cache.setItem('current-refresh-token', refreshToken)
+
+  if (params.hasOwnProperty('__sst')) {
+    const refreshToken = params.get('__sst')
+    await cache.setItem('current-refresh-token', refreshToken)
+  }
 }
 
 const extendUserVuex = {
