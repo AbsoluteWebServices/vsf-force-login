@@ -9,24 +9,24 @@ const setTokens = async () => {
     return
   }
 
-  rootStore.dispatch('user/clearCurrentUser', {silent: true}).then(() => {
+  await rootStore.dispatch('user/clearCurrentUser', {silent: true}).then(async () => {
     // clear cart cache
     const cartCache = Vue.prototype.$db.cartsCollection
-    cartCache.setItem('current-cart-token', null)
-    cartCache.setItem('current-cart-hash', null)
-    cartCache.setItem('current-cart', null)
+    await cartCache.setItem('current-cart-token', null)
+    await cartCache.setItem('current-cart-hash', null)
+    await cartCache.setItem('current-cart', null)
 
     const token = params.get('__sso')
     const cache = Vue.prototype.$db.usersCollection
 
-    cache.setItem('current-token', token)
+    await cache.setItem('current-token', token)
 
     // we add to the cache we came from sso, useful for detecting on auth page
-    cache.setItem('source-sso', true)
+    await cache.setItem('source-sso', true)
 
     if (params.hasOwnProperty('__sst')) {
       const refreshToken = params.get('__sst')
-      cache.setItem('current-refresh-token', refreshToken)
+      await cache.setItem('current-refresh-token', refreshToken)
     }
   })
 }
