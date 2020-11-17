@@ -10,11 +10,17 @@ const setTokens = async () => {
   }
 
   await rootStore.dispatch('user/clearCurrentUser', {silent: true}).then(async () => {
-    // clear cart cache
     const cartCache = Vue.prototype.$db.cartsCollection
-    await cartCache.setItem('current-cart-token', null)
-    await cartCache.setItem('current-cart-hash', null)
-    await cartCache.setItem('current-cart', null)
+    const externalToken = await cartCache.getItem('external-cart-token')
+    const cartToken = await cartCache.getItem('external-cart-token')
+
+    if (!params.has('__ct') && (!externalToken || externalToken !== cartToken)) {
+      // clear cart cache
+      await cartCache.setItem('current-cart-token', null)
+      await cartCache.setItem('external-cart-token', null)
+      await cartCache.setItem('current-cart-hash', null)
+      await cartCache.setItem('current-cart', null)
+    }
 
     const token = params.get('__sso')
     const cache = Vue.prototype.$db.usersCollection
