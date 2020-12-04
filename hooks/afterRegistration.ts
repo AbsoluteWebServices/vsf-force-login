@@ -4,16 +4,19 @@ import { isServer } from '@vue-storefront/core/helpers'
 const setTokens = async () => {
   const params = new URLSearchParams(location.search)
 
-  if (!params.has('__sso') || !params.has('__sst')) {
+  if (!params.has('__sso')) {
     return
   }
 
   const token = params.get('__sso')
-  const refreshToken = params.get('__sst')
   const usersCollection = StorageManager.get('user')
 
   await usersCollection.setItem('current-token', token)
-  await usersCollection.setItem('current-refresh-token', refreshToken)
+
+  if (params.hasOwnProperty('__sst')) {
+    const refreshToken = params.get('__sst')
+    await usersCollection.setItem('current-refresh-token', refreshToken)
+  }
 }
 
 export function afterRegistration () {
