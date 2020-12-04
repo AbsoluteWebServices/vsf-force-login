@@ -5,6 +5,7 @@ import { afterRegistration } from './hooks/afterRegistration'
 
 export const ForceLoginModule: StorefrontModule = async function ({ router }) {
   StorageManager.init('user')
+  StorageManager.init('cart')
   router.beforeEach(beforeEachGuard)
   afterRegistration()
 }
